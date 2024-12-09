@@ -18,6 +18,7 @@ library(tidyr)
 library(readxl)
 ```
 
+
 ```{r, echo=FALSE}
 # Read in the data
 df_score <- read.csv("diversity_score.csv")
@@ -25,11 +26,13 @@ df_sex <- read.csv("diversity_score_withsex.csv")
 df_final <- read.csv("final_data.csv")
 ```
 
+
 # Introduction
 
 Our group's project is on the positional behaviors of orangutans. Orangutans are primates that live in the rain forests of Southeast Asia and are known for their red fur and high intelligence. They are also the largest arboreal mammals living in the world. They are found mainly in Borneo and Sumatra and are listed as an endangered species due to habitat loss and threats from illegal hunting. The main objective of this consulting project is to help the client analyze the positional behaviors of orangutans over developmental stages to understand how these behaviors evolve with age. The client used a measurement called Shannor Weaver Index to calculate the diversity score based on the positional behavior and try to find its relationship with age. How Shannor Weaver Index is calculated will be covered more in the method part of the report.
 
-The original data that the client gave us contains 237 individual orangutans that had been followed for 30 years at different periods. Each orangutan was observed for a period of time at different times, and the timing of the behavior at each location was recorded. In total, there are 77 unique positional behaviors recorded for each orangutan. These behaviors are created by the combination of three behavior groups: activity type, body position, and tree position.
+The original data that the client gave us contains 237 individual orangutans that had been followed for 30 years at different periods.
+Each orangutan was observed for a period of time at different times, and the timing of the behavior at each location was recorded. In total, there are 77 unique positional behaviors recorded for each orangutan. These behaviors are created by the combination of three behavior groups: activity type, body position, and tree position.
 
 In this report, we will mainly talk about the basic EDA to analyze the data, the methods used to assess the relationship, including the models used, and finally the conclusion based on the results.
 
@@ -39,7 +42,7 @@ Our dataset is a comprehensive collection of behavioral and demographic data gat
 
 Behavioral activity data is detailed in columns labeled with terms like "TotalM," capturing the total minutes spent on specific activities. These metrics provide valuable insights into individual behaviors, enabling the study of activity patterns and their variations with age, session conditions, or other demographic factors.
 
-To ensure the dataset's usability and reliability, extensive cleaning and preprocessing were conducted. Rows marked for exclusion were removed, as were records with insufficient awake time (Minutes awake \< 300). Missing values in key columns were addressed to maintain consistency, and activity metrics were normalized relative to total awake time to facilitate comparisons across individuals and sessions. Duplicate records were eliminated, and data from juveniles and adults were processed separately before being merged into a single, cohesive dataset.
+To ensure the dataset's usability and reliability, extensive cleaning and preprocessing were conducted. Rows marked for exclusion were removed, as were records with insufficient awake time (Minutes awake < 300). Missing values in key columns were addressed to maintain consistency, and activity metrics were normalized relative to total awake time to facilitate comparisons across individuals and sessions. Duplicate records were eliminated, and data from juveniles and adults were processed separately before being merged into a single, cohesive dataset.
 
 This cleaned and structured dataset offers a rich foundation for analyzing individual and group behaviors, exploring diversity patterns, and drawing meaningful conclusions about the relationship between demographic factors and observed activities.
 
@@ -48,7 +51,6 @@ This cleaned and structured dataset offers a rich foundation for analyzing indiv
 The client divided all the ages into 7 groups. In the original dataset, if the age is between 0 to 2, then those orangutans are classified as age level 1; if the age is between 2 to 4, then those orangutans are classified as age level 2; if the age is between 4 to 6, then those orangutans are classified as age level 3; if the age is between 6 to 8, then those orangutans are classified as age level 4; if the age is between 8 to 10, then those orangutans are classified as age level 5; if the age is between 10 to 12, then those orangutans are classified as age level 5. For those with ages greater than 12, they go to the age 7 group. Also, all the minutes awake are greater than 360 minutes.
 
 ## Part 1: The Distribution of Minutes Awake
-
 ```{r, echo=FALSE}
 ggplot(df_final, aes(x = `Minutes.awake`)) +
   geom_histogram(binwidth = 30, fill = "steelblue", color = "black", alpha = 0.8) +
@@ -64,8 +66,8 @@ ggplot(df_final, aes(x = `Minutes.awake`)) +
   )
 ```
 
-## Part 2: Visualization of Diversity Score
 
+## Part 2: Visualization of Diversity Score
 ```{r, echo=FALSE}
 age_ranges <- c("0-2", "2-4", "4-6", "6-8", "8-10", "10-12", ">12")
 # Boxplot
@@ -93,17 +95,15 @@ ggplot(df_score, aes(x = factor(Age, labels = age_ranges), y = DiversityScore)) 
   theme_minimal() +
   theme(axis.text.x = element_text(size = 12), axis.title = element_text(size = 14))
 ```
-
 The boxplot shows that the median of Diversity Score increases slightly with Age, especially from Age group 1 to Age group 2. Then the trend leveled off and the median for all age groups remained at about 1.5. There are two outliers which appeared in Age 3 and Age 5 groups.
 
 In the violinplot, the similar width of the violin illustrates that the sample size is relatively balanced across age groups due to, there is no particularly small or large sample group.
 
 It also shows that the Diversity Score for all age groups was roughly distributed between 0 and 3. The distribution of Diversity score in group 2-7 are similar that most observations are concentrated between 1 and 2. The data in Age 1 group are dispersed to a large extent, which is from 0 to 2.5.
 
-In addition, as the age get older, the variability of the data seems to decrease and the distribution becomes more concentrated.
+In addition, as the age get older, the variability of the data seems to decrease and the distribution becomes more concentrated. 
 
 ## Part 3: Diversity Score Statistics
-
 ```{r, echo=FALSE}
 #eda 3
 diversity_stats <- df_score %>%
@@ -146,11 +146,11 @@ ggplot(age_counts1, aes(x = factor(Age, labels = age_ranges), y = count)) +
   ) +
   theme_minimal()
 ```
+The number of observations varies significantly across age groups.
+Age group 7 has the largest number of observations(about 800), which might introduce a sampling bias in the data analysis. Age group 1 has the smallest count(about 180), which could affect the reliability of statistical summaries or models for that group.
 
-The number of observations varies significantly across age groups. Age group 7 has the largest number of observations(about 800), which might introduce a sampling bias in the data analysis. Age group 1 has the smallest count(about 180), which could affect the reliability of statistical summaries or models for that group.
 
 ## Part 4: Find the Number of Unique Positional Behaviors for Each Age Group
-
 ```{r, echo=FALSE}
 result <- df_final %>%
   pivot_longer(cols = 7:ncol(df_final),
@@ -175,7 +175,6 @@ ggplot(result, aes(x=Age, y=PB_count)) +
 
 print(result)
 ```
-
 From the table above, Age 4 group has 68 kinds of positional behaviors, which is the most number of distinct positional behaviors across all age groups. Age 1 group has only 49 kinds of positional behaviors, which is the least number of distinct behaviour among 7 groups.
 
 Also, from the line graph, starting from age 2 to 4, there is a surge in the number of distinct positional behaviors, and after year 4, there is a significant decrease in number of positional behaviors, which means that year 4 is an important time point to focus on.
@@ -183,7 +182,6 @@ Also, from the line graph, starting from age 2 to 4, there is a surge in the num
 ## Part 5: Difference in Diversity Score between Sex
 
 We noticed that there is values "M?" in the sex column, so we changed "M?" to "M". Now we can check the unique value in the sex column:
-
 ```{r, echo=FALSE}
 df_sex$Sex <- gsub("M?", "M", df_sex$Sex, fixed = TRUE)
 df_sex <- df_sex[!df_sex$Sex %in% c("?", "Q"), ]
@@ -191,7 +189,6 @@ unique(df_sex$Sex)
 ```
 
 After cleaning the Sex column, we drew a box plots to show the difference in distribution with different sex in different age groups:
-
 ```{r, echo=FALSE, fig.width=6, fig.height=4, fig.align='center'}
 ggplot() +
   geom_point(data=df_sex, aes(x=as.factor(Age), y=DiversityScore, fill=Sex, color=Sex), size = 0.75, shape = 1, position = position_jitterdodge()) +
@@ -201,11 +198,9 @@ ggplot() +
        y = "Diversity Score")+
   theme_classic()
 ```
-
 From the plot above, there is clear distinction between distribution of diversity score for different sex. For age group 1 to 5, the median diversity score is higher for female compared to male. For age group 6, there is only female data in the dataset, and for age group 7, the median for both female and male group is similar.
 
 According to EDA, we also think minute awake is an important predictor in modeling the diversity score, so we add Minutes.awake variable to the dataset:
-
 ```{r, echo=FALSE}
 df_final_subset <- df_final[, c("Name", "Follow.Number", "Minutes.awake")]
 df_final_subset <- df_final_subset %>%
@@ -218,16 +213,18 @@ df_sex <- merge(df_sex, df_final_subset, by = c("Name", "FollowNumber"), all.x =
 glimpse(df_sex)
 ```
 
-# Modeling and Model Result
 
+# Modeling and Model Result
 ## How does Shannon Weaver Index calculate mathematically?
 
-The formula is shown below: $H' = -\sum_{i=1}^{S} p_i \ln(p_i)$ In this formula, S represents the number of unique categories in the data, $p_i$ is the proportion, which in the client's data refers to the proportion of recorded time of each distinct behaviors of a specific orangutan in relation to this orangutan's total minutes of awake.
+The formula is shown below:
+$H' = -\sum_{i=1}^{S} p_i \ln(p_i)$
+In this formula, S represents the number of unique categories in the data, $p_i$ is the proportion, which in the client's data refers to the proportion of recorded time of each distinct behaviors of a specific orangutan in relation to this orangutan's total minutes of awake.
+
 
 ## Client Models
 
 Following client suggestions, we would like to use linear mixed effect models and build upon client's models and see if we improve the client's models. Initial client models are listed below:
-
 ```{r}
 model.1 <- glmmTMB(data=df_score, 
                    DiversityScore ~  (1|Name) + (1|FollowNumber),
@@ -243,12 +240,12 @@ model.3 <- glmmTMB(data=df_score,
                    family=gaussian(link="log"))
 ```
 
+
 ## Check Client's Model Assumptions
 
 We first need to check all the linear assumptions are met:
 
 ### Model 1
-
 ```{r, echo=FALSE}
 residuals_model <- residuals(model.1, type = "pearson")
 
@@ -268,7 +265,6 @@ abline(h = 0, col = "red")
 ```
 
 ### Model 2
-
 ```{r, echo=FALSE}
 residuals_model <- residuals(model.2, type = "pearson")
 
@@ -288,7 +284,6 @@ abline(h = 0, col = "red")
 ```
 
 ### Model 3
-
 ```{r, echo=FALSE}
 residuals_model <- residuals(model.3, type = "pearson")
 
@@ -306,13 +301,11 @@ plot(fitted_values, residuals_model, main = "Residuals vs Fitted Values",
      xlab = "Fitted Values", ylab = "Residuals")
 abline(h = 0, col = "red")
 ```
-
 Based on the assumptions check above, all three models have normal distributed residuals, no-heavy tails in qq plot and random distribution in residual vs fitted plot, indicating that all the models satisfy linear assumptions.
 
 ## Build Upon Client's Model
 
 Here we propose three new models building upon the client models, we treat age as a categorical variable, and we also add sex and minutes.awake into the model:
-
 ```{r, warning=FALSE}
 df_sex$Age <- as.factor(df_sex$Age)
 df_sex <- df_sex %>%
@@ -333,7 +326,6 @@ anova(newmodel.1, newmodel.2)
 anova(newmodel.2, newmodel.3)
 anova(newmodel.1, newmodel.3)
 ```
-
 According to the chi-square test, model.3 is the best model, and minutes awake, age group 2, 3, 6 and 7 are statistically significant variables. Sex is not a statistically significant variable, we can consider removing it in the later model.
 
 ```{r, warning=FALSE}
@@ -343,15 +335,10 @@ newmodel.4 <- glmmTMB(data = df_sex,
 summary(newmodel.4)
 anova(newmodel.4, newmodel.3)
 ```
-
 According to the chi-square result above, the p-value greater than 0.05, showing that we cannot reject the null hypothesis, and adding variable sex does not significantly improve the model performance. We can further check the performance of model 4 using AIC and MSE below.
 
-
-
 ## Model Diagnostics for Our Model 4
-
 ### New Model 4
-
 ```{r, echo=FALSE}
 residuals_model <- residuals(newmodel.4, type = "pearson")
 
@@ -373,7 +360,6 @@ abline(h = 0, col = "red")
 By checking the models assumptions, the model chosen satisfies the model assumptions.
 
 ## Compare Our Model to The Client's Model
-
 ```{r, warning=FALSE, echo=FALSE}
 aic_model1 <- AIC(model.1)
 aic_newmodel1 <- AIC(newmodel.1)
@@ -418,13 +404,12 @@ comparison_table <- data.frame(
 # Print the table
 print(comparison_table)
 ```
-
 According to the AIC and MSE comparison above, our models have lower AIC and MSE, indicating that our model performs better. Although from the ANOVA table above, adding variable sex does not further improve the model, Model 3 does have smaller MSE but higher AIC compared to model 4. In order to achieve simpler model structure, we plan to choose model 4.
+
 
 ## Model 4 Performance Using Cross Validation
 
 To validate the performance of the model 4 above, we propose to use k-fold cross validation:
-
 ```{r, warning=FALSE}
 # Custom function to fit models
 fit_glmmTMB <- function(train_data, test_data) {
@@ -457,8 +442,9 @@ mean_mse <- mean(cv_results)
 cat("Average MSE across folds:", mean_mse, "\n")
 ```
 
-## Refit Model 4 Using stan_glmer To Validate Performance
 
+
+## Refit Model 4 Using stan_glmer To Validate Performance
 ```{r}
 stanmodel_4 <- stan_glmer(
   DiversityScore ~ Age + Minutes.awake + (1 | Name),
@@ -467,20 +453,17 @@ stanmodel_4 <- stan_glmer(
   refresh = 0
 )
 ```
-
 ```{r}
 predictions <- posterior_predict(stanmodel_4, type = "response")
 mean_prediction <- colMeans(predictions)
 mse_stanmodel4 <- mean((df_sex$DiversityScore - mean_prediction)^2)
 print(mse_stanmodel4)
 ```
-
 By refitting the model using the Bayesian Approach(stan_glmer), we get similar MSE result with glmmTMB, confirming that model 4 is the best model.
 
 # Additional Requirement from The Client
 
 The client also wants to know if there is any correlation between different age groups and the total minutes awake for each positional behaviors. We will start by processing the data first, and the main goal of the data processing is to create a dataframe with rows representing the positional behaviours, and 7 columns representing each of the age group, and each entry in the table represents the total minutes of the positional behaviours for each age group.
-
 ```{r, echo=FALSE, warning=FALSE}
 df <- read_xlsx("parsed-all.xlsx")
 df$`Age class lookup` <- tolower(df$`Age class lookup`)
@@ -516,7 +499,6 @@ flipped_table <- flipped_table[rowSums(flipped_table) > 0, ]
 ```
 
 After transforming the data, we propose to use two sample t-test to test for the significance of difference between mean of minutes awake between any two age groups. The p-value matrix is shown below:
-
 ```{r, echo=FALSE}
 # Initialize a result matrix
 n <- ncol(flipped_table)
@@ -539,25 +521,13 @@ diag(p_value_matrix) <- 1
 # Print the rounded p-value matrix
 print(round(p_value_matrix, 4))
 ```
-
-The pairwise t-test results compare the mean observed time for different positional behaviors across age groups. All p-values are greater than 0.05, indicating no statistically significant differences in the mean observed time for these positional behaviors between any of the age groups. This suggests that the variation in mean observed time across age groups is not substantial enough to be considered statistically significant.
-
-
-# Result and Discussion
-```{r}
-summary(newmodel.4)
-```
-
-According to the previous evaluation, we choose our new model 4 as the best model to interpret our analysis. As the individual differences in each orangutan were modeled as random effects, age had a significant negative effect on the Diversity_Score, indicating a gradual decrease in behavioral diversity as orangutans age. Minutes_awake has a positive effect on Diversity_Score, indicating that the longer the awake time, the more chance to show diversified behaviors.
-
-For future optimization and exploration, there are three aspect can be condisered. First, current model uses a log link function to address potential non-linear relationships between predictors and the response variable. Future studies could compare this with alternative link functions, such as an identity link, to test whether a simpler transformation improves the model fit. 
-
-Second, advanced machine learning techniques, such as random forest or XGBoost, could be explored to model non-linear relationships and interactions between predictors. 
-
-Third, our study primarily utilized a frequentist approach. The bayesian framework could also be used to generating posterior distributions for parameter estimates, and provide more flexible modeling of random effects. 
+The pairwise t-test results compare the mean observed time for different positional behaviors across age groups. All p-values are greater than 0.05, indicating no statistically significant differences in the mean observed time for these  positional behaviors  between any of the age groups. This suggests that the variation in mean observed time across age groups is not substantial enough to be considered statistically significant.
 
 
-# Conclusion
-In conclusion, this report mainly provides statistical insights, including data exploration, model assumption check and model optimizing. Model evaluation part shows the effect of sex on orangutan behavior diversity scores is not statistically significant and did not improve model performance. The best model suggests that age and awake time are key factors influencing behavioral diversity in orangutans, but individual differences also need to be considered. In addition, we also interpret several areas for future optimization and enhance the analysis.
+
+
+
+
+
 
 
