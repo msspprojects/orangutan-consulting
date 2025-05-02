@@ -1,3 +1,6 @@
+*.csv
+*.xlsx
+MSSP-RitikaSibal/
 # History files
 .Rhistory
 .Rapp.history
